@@ -5,146 +5,170 @@
 <title>Web-Site</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
 <style>
-:root {
-  --accent:#7a5cff;
-  --accent2:#00f7ff;
+/* =========================
+   ROOT + RESET
+========================= */
+:root{
+  --bg:#0b0c10;
+  --panel:rgba(20,22,30,.88);
+  --card:rgba(28,30,40,.9);
+  --teal:#00ffd5;
+  --orange:#ff7a00;
+  --danger:#ff4b4b;
 }
-
-* { box-sizing:border-box; font-family:Segoe UI,sans-serif }
-
-body {
+*{box-sizing:border-box;font-family:system-ui,Segoe UI}
+body{
   margin:0;
-  background:#000;
+  background:radial-gradient(circle at top,#1a1c22,#000);
   color:white;
   display:flex;
   height:100vh;
   overflow:hidden;
 }
 
-/* SPIDER WEB */
-canvas {
+/* =========================
+   SPIDER WEB BACKGROUND
+========================= */
+canvas{
   position:fixed;
   inset:0;
   z-index:-1;
 }
 
-/* PANEL */
-#panel {
+/* =========================
+   PANEL
+========================= */
+#panel{
   width:270px;
-  background:rgba(10,15,40,.95);
-  padding:20px;
+  background:var(--panel);
+  backdrop-filter:blur(16px);
+  padding:18px;
   display:flex;
   flex-direction:column;
-  gap:15px;
-  box-shadow:0 0 40px #000;
+  gap:12px;
+  border-right:1px solid #222;
 }
-
-#panel h1 {
+#panel h1{
   text-align:center;
-  color:var(--accent2);
-  text-shadow:0 0 20px var(--accent2);
+  color:var(--teal);
+  text-shadow:0 0 20px var(--teal);
 }
-
-button, select {
+#panel small{
+  text-align:center;
+  opacity:.7;
+}
+button,input,select{
   padding:12px;
   border:none;
   border-radius:10px;
+}
+button{
+  background:linear-gradient(135deg,var(--teal),var(--orange));
+  font-weight:700;
   cursor:pointer;
-  font-weight:bold;
 }
-
-#addBtn {
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
+button.danger{
+  background:linear-gradient(135deg,var(--danger),#ff0000);
 }
-
-#filter {
+input,select{
   background:#111;
   color:white;
 }
 
-/* MAIN */
-#main {
+/* =========================
+   MAIN GRID
+========================= */
+#main{
   flex:1;
-  padding:30px;
+  padding:28px;
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
-  gap:25px;
-  overflow-y:auto;
+  grid-template-columns:repeat(auto-fill,280px);
+  gap:26px;
+  overflow:auto;
 }
 
-.card {
-  background:rgba(20,25,70,.9);
-  border-radius:16px;
+/* =========================
+   CARD
+========================= */
+.card{
+  background:var(--card);
+  border-radius:18px;
   overflow:hidden;
-  box-shadow:0 0 25px rgba(122,92,255,.4);
+  box-shadow:0 0 30px rgba(0,255,213,.25);
   cursor:pointer;
   transition:.4s;
-  animation:float 6s infinite ease-in-out;
 }
-
-.card:hover { transform:scale(1.05) }
-
-.card h2 {
-  margin:0;
-  padding:10px;
-  background:linear-gradient(90deg,var(--accent),var(--accent2));
-  color:black;
+.card:hover{
+  transform:scale(1.06);
+  box-shadow:0 0 45px rgba(255,122,0,.45);
+}
+.card img{
+  width:100%;
+  height:160px;
+  object-fit:cover;
+  background:#000;
+}
+.card h3{
+  margin:8px 0 2px;
   text-align:center;
 }
-
-.card small {
+.card small{
   display:block;
   text-align:center;
-  padding:6px;
-  opacity:.8;
+  opacity:.7;
+  padding-bottom:6px;
 }
-
-.card iframe {
-  width:100%;
-  height:200px;
-  border:none;
-}
-
-/* ADMIN CONTROLS */
-.controls {
+.controls{
   display:flex;
-  gap:10px;
-  padding:10px;
+  gap:8px;
+  padding:8px;
 }
-
-.controls button {
+.controls button{
   flex:1;
-  background:#ff4b4b;
+  padding:8px;
+  font-size:12px;
 }
 
-.controls button.edit {
-  background:#4bffb3;
-}
-
-/* VIEWER */
-#viewer {
+/* =========================
+   VIEWER
+========================= */
+#viewer{
   position:fixed;
   inset:0;
-  background:black;
+  background:#000;
   display:none;
   flex-direction:column;
   z-index:999;
 }
-
-#viewer iframe {
+#viewerHeader{
+  display:flex;
+  gap:10px;
+  padding:10px;
+}
+#viewer iframe{
   flex:1;
   border:none;
 }
 
-#viewer button {
-  background:var(--accent);
-  padding:14px;
-}
-
-@keyframes float {
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-10px)}
+/* =========================
+   LOGIN
+========================= */
+#login{
+  position:fixed;
+  inset:0;
+  background:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:12px;
+  z-index:1000;
 }
 </style>
 </head>
@@ -153,42 +177,200 @@ button, select {
 
 <canvas id="web"></canvas>
 
-<div id="panel">
+<div id="login">
+  <h2>Web-Site Login</h2>
+  <input id="email" placeholder="Email">
+  <input id="password" placeholder="Password" type="password">
+  <button onclick="login()">Login / Sign Up</button>
+</div>
+
+<div id="panel" hidden>
   <h1>Web-Site</h1>
-  <button id="addBtn">➕ Add Site</button>
-  <select id="filter">
+  <small id="roleLabel"></small>
+  <input id="search" placeholder="Search sites">
+  <select id="categoryFilter">
     <option value="all">All Categories</option>
   </select>
+  <button onclick="addSite()">➕ Add Site</button>
+  <button class="danger" onclick="logout()">Logout</button>
 </div>
 
 <div id="main"></div>
 
 <div id="viewer">
-  <button onclick="closeViewer()">⬅ Close</button>
+  <div id="viewerHeader">
+    <input id="viewerPass" placeholder="Viewer Password">
+    <button onclick="unlockViewer()">Unlock</button>
+    <button class="danger" onclick="closeViewer()">Close</button>
+  </div>
   <iframe></iframe>
 </div>
 
 <script>
-/* ====== SPIDER WEB ====== */
-const c=document.getElementById("web"),ctx=c.getContext("2d");
+/* =========================
+   FIREBASE INIT
+========================= */
+firebase.initializeApp({
+  /* PASTE YOUR FIREBASE CONFIG HERE */
+});
+const auth=firebase.auth();
+const db=firebase.firestore();
+
+/* =========================
+   CONSTANTS
+========================= */
+const ADMINS=["ELIADMIN1","DANIELADMIN2"];
+const main=document.getElementById("main");
+const panel=document.getElementById("panel");
+const loginBox=document.getElementById("login");
+const categoryFilter=document.getElementById("categoryFilter");
+let currentSite=null;
+let isAdmin=false;
+
+/* =========================
+   AUTH
+========================= */
+function login(){
+ auth.signInWithEmailAndPassword(email.value,password.value)
+ .catch(()=>auth.createUserWithEmailAndPassword(email.value,password.value));
+}
+function logout(){auth.signOut()}
+
+auth.onAuthStateChanged(user=>{
+ if(!user){
+  loginBox.style.display="flex";
+  panel.hidden=true;
+ }else{
+  loginBox.style.display="none";
+  panel.hidden=false;
+  const name=user.email.split("@")[0].toUpperCase();
+  isAdmin=ADMINS.includes(name);
+  roleLabel.textContent=isAdmin?"Admin":"Viewer";
+  loadSites();
+ }
+});
+
+/* =========================
+   LOAD & RENDER
+========================= */
+function loadSites(){
+ db.collection("sites").onSnapshot(snap=>{
+  main.innerHTML="";
+  categoryFilter.innerHTML='<option value="all">All Categories</option>';
+  let cats=new Set();
+
+  snap.forEach(doc=>{
+   const site=doc.data();
+   site.id=doc.id;
+   cats.add(site.category);
+
+   if(categoryFilter.value!=="all" && site.category!==categoryFilter.value)return;
+   if(!site.name.toLowerCase().includes(search.value.toLowerCase()))return;
+
+   const card=document.createElement("div");
+   card.className="card";
+   card.innerHTML=`
+    <img src="https://www.google.com/s2/favicons?sz=256&domain=${site.url}">
+    <h3>${site.name}</h3>
+    <small>${site.category}</small>
+   `;
+   card.onclick=()=>openViewer(site);
+
+   if(isAdmin){
+    const controls=document.createElement("div");
+    controls.className="controls";
+    controls.innerHTML=`
+      <button>Edit</button>
+      <button class="danger">Delete</button>
+    `;
+    controls.children[0].onclick=e=>{
+      e.stopPropagation();
+      editSite(site);
+    };
+    controls.children[1].onclick=e=>{
+      e.stopPropagation();
+      deleteSite(site.id);
+    };
+    card.appendChild(controls);
+   }
+   main.appendChild(card);
+  });
+
+  cats.forEach(c=>{
+   const o=document.createElement("option");
+   o.value=o.textContent=c;
+   categoryFilter.appendChild(o);
+  });
+ });
+}
+
+search.oninput=loadSites;
+categoryFilter.onchange=loadSites;
+
+/* =========================
+   ADMIN ACTIONS
+========================= */
+function addSite(){
+ if(!isAdmin)return alert("Admins only");
+ const name=prompt("Site name");
+ const url=prompt("Site URL");
+ const category=prompt("Category");
+ const pass=prompt("Viewer password");
+ if(name&&url&&category&&pass)
+  db.collection("sites").add({name,url,category,pass});
+}
+function editSite(site){
+ const name=prompt("Name",site.name);
+ const url=prompt("URL",site.url);
+ const category=prompt("Category",site.category);
+ const pass=prompt("Viewer password",site.pass);
+ db.collection("sites").doc(site.id).update({name,url,category,pass});
+}
+function deleteSite(id){
+ if(confirm("Delete this site?"))
+  db.collection("sites").doc(id).delete();
+}
+
+/* =========================
+   VIEWER
+========================= */
+function openViewer(site){
+ currentSite=site;
+ viewer.style.display="flex";
+ viewer.querySelector("iframe").src="";
+}
+function unlockViewer(){
+ if(viewerPass.value!==currentSite.pass)return alert("Wrong password");
+ viewer.querySelector("iframe").src=currentSite.url;
+}
+function closeViewer(){
+ viewer.style.display="none";
+ viewer.querySelector("iframe").src="";
+}
+
+/* =========================
+   SPIDER WEB ANIMATION
+========================= */
+const c=document.getElementById("web");
+const ctx=c.getContext("2d");
 function resize(){c.width=innerWidth;c.height=innerHeight}
 window.onresize=resize;resize();
-let pts=[...Array(80)].map(()=>({
+let pts=[...Array(90)].map(()=>({
  x:Math.random()*c.width,
  y:Math.random()*c.height,
- vx:(Math.random()-.5)*.6,
- vy:(Math.random()-.5)*.6
+ vx:(Math.random()-.5)*.5,
+ vy:(Math.random()-.5)*.5
 }));
-function web(){
+(function animate(){
  ctx.clearRect(0,0,c.width,c.height);
  pts.forEach(p=>{
   p.x+=p.vx;p.y+=p.vy;
   if(p.x<0||p.x>c.width)p.vx*=-1;
   if(p.y<0||p.y>c.height)p.vy*=-1;
   pts.forEach(o=>{
-   let d=Math.hypot(p.x-o.x,p.y-o.y);
+   const d=Math.hypot(p.x-o.x,p.y-o.y);
    if(d<120){
-    ctx.strokeStyle=`rgba(120,90,255,${1-d/120})`;
+    ctx.strokeStyle=`rgba(0,255,213,${1-d/120})`;
     ctx.beginPath();
     ctx.moveTo(p.x,p.y);
     ctx.lineTo(o.x,o.y);
@@ -196,94 +378,8 @@ function web(){
    }
   });
  });
- requestAnimationFrame(web);
-}
-web();
-
-/* ====== DATA ====== */
-const admins={
- ELIADMIN1:"admin1.00101",
- DANIELADMIN2:"admin2.00102"
-};
-const key="webSiteData";
-const channel=new BroadcastChannel("web-site-sync");
-const main=document.getElementById("main");
-const filter=document.getElementById("filter");
-
-function getData(){
- return JSON.parse(localStorage.getItem(key)||"[]");
-}
-function saveData(d){
- localStorage.setItem(key,JSON.stringify(d));
- channel.postMessage("update");
-}
-
-/* ====== RENDER ====== */
-function render(){
- main.innerHTML="";
- filter.innerHTML='<option value="all">All Categories</option>';
- let data=getData();
- let cats=[...new Set(data.map(s=>s.cat))];
- cats.forEach(c=>filter.innerHTML+=`<option>${c}</option>`);
- data.filter(s=>filter.value=="all"||s.cat==filter.value)
- .forEach((s,i)=>{
-  let card=document.createElement("div");
-  card.className="card";
-  card.innerHTML=`
-   <h2>${s.name}</h2>
-   <small>${s.cat}</small>
-   <iframe src="${s.url}"></iframe>
-   ${s.admin?`<div class="controls">
-     <button class="edit">Edit</button>
-     <button>Delete</button>
-   </div>`:""}
-  `;
-  card.onclick=e=>{
-    if(e.target.tagName==="BUTTON")return;
-    openViewer(s.url);
-  };
-  if(s.admin){
-   card.querySelector(".edit").onclick=()=>{
-    s.name=prompt("New name",s.name)||s.name;
-    s.url=prompt("New URL",s.url)||s.url;
-    s.cat=prompt("Category",s.cat)||s.cat;
-    data[i]=s;saveData(data);
-   };
-   card.querySelector(".controls button:last-child").onclick=()=>{
-    data.splice(i,1);saveData(data);
-   };
-  }
-  main.appendChild(card);
- });
-}
-filter.onchange=render;
-channel.onmessage=render;
-
-/* ====== ADD ====== */
-document.getElementById("addBtn").onclick=()=>{
- let u=prompt("Admin Username:");
- let p=prompt("Admin Password:");
- if(admins[u]!==p)return alert("Denied");
- let name=prompt("Display name:");
- let url=prompt("Site URL:");
- let cat=prompt("Category:");
- if(!name||!url||!cat)return;
- let d=getData();
- d.push({name,url,cat,admin:true});
- saveData(d);
-};
-
-/* ====== VIEWER ====== */
-function openViewer(url){
- document.getElementById("viewer").style.display="flex";
- document.querySelector("#viewer iframe").src=url;
-}
-function closeViewer(){
- document.getElementById("viewer").style.display="none";
- document.querySelector("#viewer iframe").src="";
-}
-
-render();
+ requestAnimationFrame(animate);
+})();
 </script>
 
 </body>
