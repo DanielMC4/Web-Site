@@ -2,187 +2,288 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>The "SpiderwebImage" Web Site</title>
+<title>Web-Site</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 :root {
-  --bg: #05060a;
-  --panel: #0c1020;
-  --accent: #7a5cff;
-  --accent2: #00f7ff;
+  --accent:#7a5cff;
+  --accent2:#00f7ff;
 }
 
-* {
-  box-sizing: border-box;
-  font-family: "Segoe UI", sans-serif;
-}
+* { box-sizing:border-box; font-family:Segoe UI,sans-serif }
 
 body {
-  margin: 0;
-  background: radial-gradient(circle at top, #0b0f2a, #000);
-  color: white;
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
+  margin:0;
+  background:#000;
+  color:white;
+  display:flex;
+  height:100vh;
+  overflow:hidden;
 }
 
-/* LEFT PANEL */
+/* SPIDER WEB */
+canvas {
+  position:fixed;
+  inset:0;
+  z-index:-1;
+}
+
+/* PANEL */
 #panel {
-  width: 260px;
-  background: linear-gradient(180deg, #0b0f2a, #02030a);
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  animation: slideIn 1.2s ease;
-  box-shadow: 0 0 40px #000;
+  width:270px;
+  background:rgba(10,15,40,.95);
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+  box-shadow:0 0 40px #000;
 }
 
 #panel h1 {
-  font-size: 18px;
-  text-align: center;
-  color: var(--accent2);
-  text-shadow: 0 0 15px var(--accent2);
-  animation: glow 2s infinite alternate;
+  text-align:center;
+  color:var(--accent2);
+  text-shadow:0 0 20px var(--accent2);
+}
+
+button, select {
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
 }
 
 #addBtn {
-  padding: 14px;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: bold;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  color: black;
-  animation: pulse 1.4s infinite;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
 }
 
-/* MAIN AREA */
+#filter {
+  background:#111;
+  color:white;
+}
+
+/* MAIN */
 #main {
-  flex: 1;
-  padding: 30px;
-  overflow-y: auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 30px;
-  animation: fadeIn 1.5s ease;
+  flex:1;
+  padding:30px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:25px;
+  overflow-y:auto;
 }
 
-/* SITE CARD */
 .card {
-  background: linear-gradient(145deg, #0c1028, #050615);
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 0 30px rgba(122,92,255,0.3);
-  animation: float 6s infinite ease-in-out;
-  transition: transform .4s;
+  background:rgba(20,25,70,.9);
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 0 25px rgba(122,92,255,.4);
+  cursor:pointer;
+  transition:.4s;
+  animation:float 6s infinite ease-in-out;
 }
 
-.card:hover {
-  transform: scale(1.05) rotate(1deg);
-}
+.card:hover { transform:scale(1.05) }
 
 .card h2 {
-  margin: 0;
-  padding: 12px;
-  text-align: center;
-  background: linear-gradient(90deg, var(--accent), var(--accent2));
-  color: black;
+  margin:0;
+  padding:10px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  color:black;
+  text-align:center;
+}
+
+.card small {
+  display:block;
+  text-align:center;
+  padding:6px;
+  opacity:.8;
 }
 
 .card iframe {
-  width: 100%;
-  height: 220px;
-  border: none;
-  background: black;
+  width:100%;
+  height:200px;
+  border:none;
 }
 
-/* ANIMATIONS */
-@keyframes slideIn {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(0); }
+/* ADMIN CONTROLS */
+.controls {
+  display:flex;
+  gap:10px;
+  padding:10px;
 }
 
-@keyframes glow {
-  from { text-shadow: 0 0 5px var(--accent2); }
-  to { text-shadow: 0 0 25px var(--accent2); }
+.controls button {
+  flex:1;
+  background:#ff4b4b;
 }
 
-@keyframes pulse {
-  0% { box-shadow: 0 0 5px var(--accent); }
-  50% { box-shadow: 0 0 30px var(--accent2); }
-  100% { box-shadow: 0 0 5px var(--accent); }
+.controls button.edit {
+  background:#4bffb3;
+}
+
+/* VIEWER */
+#viewer {
+  position:fixed;
+  inset:0;
+  background:black;
+  display:none;
+  flex-direction:column;
+  z-index:999;
+}
+
+#viewer iframe {
+  flex:1;
+  border:none;
+}
+
+#viewer button {
+  background:var(--accent);
+  padding:14px;
 }
 
 @keyframes float {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-10px)}
 }
 </style>
 </head>
 
 <body>
 
+<canvas id="web"></canvas>
+
 <div id="panel">
-  <h1>🕷 SpiderwebImage</h1>
+  <h1>Web-Site</h1>
   <button id="addBtn">➕ Add Site</button>
+  <select id="filter">
+    <option value="all">All Categories</option>
+  </select>
 </div>
 
 <div id="main"></div>
 
+<div id="viewer">
+  <button onclick="closeViewer()">⬅ Close</button>
+  <iframe></iframe>
+</div>
+
 <script>
-const admins = {
-  "ELIADMIN1": "admin1.00101",
-  "DANIELADMIN2": "admin2.00102"
-};
-
-const main = document.getElementById("main");
-
-function loadSites() {
-  main.innerHTML = "";
-  const sites = JSON.parse(localStorage.getItem("spiderSites") || "[]");
-
-  sites.forEach(site => {
-    const card = document.createElement("div");
-    card.className = "card";
-
-    card.innerHTML = `
-      <h2>${site.name}</h2>
-      <iframe src="${site.url}"></iframe>
-    `;
-
-    main.appendChild(card);
+/* ====== SPIDER WEB ====== */
+const c=document.getElementById("web"),ctx=c.getContext("2d");
+function resize(){c.width=innerWidth;c.height=innerHeight}
+window.onresize=resize;resize();
+let pts=[...Array(80)].map(()=>({
+ x:Math.random()*c.width,
+ y:Math.random()*c.height,
+ vx:(Math.random()-.5)*.6,
+ vy:(Math.random()-.5)*.6
+}));
+function web(){
+ ctx.clearRect(0,0,c.width,c.height);
+ pts.forEach(p=>{
+  p.x+=p.vx;p.y+=p.vy;
+  if(p.x<0||p.x>c.width)p.vx*=-1;
+  if(p.y<0||p.y>c.height)p.vy*=-1;
+  pts.forEach(o=>{
+   let d=Math.hypot(p.x-o.x,p.y-o.y);
+   if(d<120){
+    ctx.strokeStyle=`rgba(120,90,255,${1-d/120})`;
+    ctx.beginPath();
+    ctx.moveTo(p.x,p.y);
+    ctx.lineTo(o.x,o.y);
+    ctx.stroke();
+   }
   });
+ });
+ requestAnimationFrame(web);
+}
+web();
+
+/* ====== DATA ====== */
+const admins={
+ ELIADMIN1:"admin1.00101",
+ DANIELADMIN2:"admin2.00102"
+};
+const key="webSiteData";
+const channel=new BroadcastChannel("web-site-sync");
+const main=document.getElementById("main");
+const filter=document.getElementById("filter");
+
+function getData(){
+ return JSON.parse(localStorage.getItem(key)||"[]");
+}
+function saveData(d){
+ localStorage.setItem(key,JSON.stringify(d));
+ channel.postMessage("update");
 }
 
-document.getElementById("addBtn").onclick = () => {
-  const user = prompt("Admin Username:");
-  const pass = prompt("Admin Password:");
-
-  if (!admins[user] || admins[user] !== pass) {
-    alert("❌ Access Denied");
-    return;
+/* ====== RENDER ====== */
+function render(){
+ main.innerHTML="";
+ filter.innerHTML='<option value="all">All Categories</option>';
+ let data=getData();
+ let cats=[...new Set(data.map(s=>s.cat))];
+ cats.forEach(c=>filter.innerHTML+=`<option>${c}</option>`);
+ data.filter(s=>filter.value=="all"||s.cat==filter.value)
+ .forEach((s,i)=>{
+  let card=document.createElement("div");
+  card.className="card";
+  card.innerHTML=`
+   <h2>${s.name}</h2>
+   <small>${s.cat}</small>
+   <iframe src="${s.url}"></iframe>
+   ${s.admin?`<div class="controls">
+     <button class="edit">Edit</button>
+     <button>Delete</button>
+   </div>`:""}
+  `;
+  card.onclick=e=>{
+    if(e.target.tagName==="BUTTON")return;
+    openViewer(s.url);
+  };
+  if(s.admin){
+   card.querySelector(".edit").onclick=()=>{
+    s.name=prompt("New name",s.name)||s.name;
+    s.url=prompt("New URL",s.url)||s.url;
+    s.cat=prompt("Category",s.cat)||s.cat;
+    data[i]=s;saveData(data);
+   };
+   card.querySelector(".controls button:last-child").onclick=()=>{
+    data.splice(i,1);saveData(data);
+   };
   }
+  main.appendChild(card);
+ });
+}
+filter.onchange=render;
+channel.onmessage=render;
 
-  const name = prompt("Name people will see on the card:");
-  const url = prompt("Site URL (https://...)");
-
-  if (!name || !url) return;
-
-  const sites = JSON.parse(localStorage.getItem("spiderSites") || "[]");
-  sites.push({ name, url });
-  localStorage.setItem("spiderSites", JSON.stringify(sites));
-
-  loadSites();
+/* ====== ADD ====== */
+document.getElementById("addBtn").onclick=()=>{
+ let u=prompt("Admin Username:");
+ let p=prompt("Admin Password:");
+ if(admins[u]!==p)return alert("Denied");
+ let name=prompt("Display name:");
+ let url=prompt("Site URL:");
+ let cat=prompt("Category:");
+ if(!name||!url||!cat)return;
+ let d=getData();
+ d.push({name,url,cat,admin:true});
+ saveData(d);
 };
 
-loadSites();
+/* ====== VIEWER ====== */
+function openViewer(url){
+ document.getElementById("viewer").style.display="flex";
+ document.querySelector("#viewer iframe").src=url;
+}
+function closeViewer(){
+ document.getElementById("viewer").style.display="none";
+ document.querySelector("#viewer iframe").src="";
+}
+
+render();
 </script>
 
 </body>
