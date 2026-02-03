@@ -5,15 +5,12 @@
 <title>Web-Site</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <style>
-/* =========================
-   ROOT + RESET
-========================= */
+/* ================= ROOT ================= */
 :root{
   --bg:#0b0c10;
   --panel:rgba(20,22,30,.88);
@@ -22,28 +19,98 @@
   --orange:#ff7a00;
   --danger:#ff4b4b;
 }
-*{box-sizing:border-box;font-family:system-ui,Segoe UI}
+
+/* ================= RESET ================= */
+*{box-sizing:border-box;font-family:system-ui}
 body{
   margin:0;
   background:radial-gradient(circle at top,#1a1c22,#000);
   color:white;
-  display:flex;
   height:100vh;
   overflow:hidden;
 }
 
-/* =========================
-   SPIDER WEB BACKGROUND
-========================= */
+/* ================= SPIDER WEB ================= */
 canvas{
   position:fixed;
   inset:0;
   z-index:-1;
 }
 
-/* =========================
-   PANEL
-========================= */
+/* ================= AUTH SCREEN ================= */
+#auth{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:40px;
+  background:rgba(0,0,0,.85);
+  z-index:1000;
+}
+
+/* LOGIN / SIGNUP BOX */
+.authBox{
+  width:300px;
+  background:var(--panel);
+  backdrop-filter:blur(14px);
+  padding:20px;
+  border-radius:16px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  box-shadow:0 0 30px rgba(0,255,213,.2);
+}
+.authBox h2{
+  text-align:center;
+  color:var(--teal);
+}
+
+/* ADMIN BOX */
+#adminBox{
+  position:fixed;
+  top:20px;
+  right:20px;
+  width:260px;
+  background:var(--panel);
+  padding:16px;
+  border-radius:14px;
+  box-shadow:0 0 25px rgba(255,122,0,.4);
+  display:none;
+  z-index:1100;
+}
+#adminBox h3{
+  margin:0 0 10px;
+  text-align:center;
+  color:var(--orange);
+}
+
+/* INPUTS */
+input,select,button{
+  padding:12px;
+  border:none;
+  border-radius:10px;
+}
+input,select{
+  background:#111;
+  color:white;
+}
+button{
+  background:linear-gradient(135deg,var(--teal),var(--orange));
+  font-weight:700;
+  cursor:pointer;
+}
+button.danger{
+  background:linear-gradient(135deg,var(--danger),#ff0000);
+}
+
+/* ================= APP ================= */
+#app{
+  display:flex;
+  height:100vh;
+}
+
+/* PANEL */
 #panel{
   width:270px;
   background:var(--panel);
@@ -59,31 +126,12 @@ canvas{
   color:var(--teal);
   text-shadow:0 0 20px var(--teal);
 }
-#panel small{
+#role{
   text-align:center;
   opacity:.7;
 }
-button,input,select{
-  padding:12px;
-  border:none;
-  border-radius:10px;
-}
-button{
-  background:linear-gradient(135deg,var(--teal),var(--orange));
-  font-weight:700;
-  cursor:pointer;
-}
-button.danger{
-  background:linear-gradient(135deg,var(--danger),#ff0000);
-}
-input,select{
-  background:#111;
-  color:white;
-}
 
-/* =========================
-   MAIN GRID
-========================= */
+/* MAIN */
 #main{
   flex:1;
   padding:28px;
@@ -93,9 +141,7 @@ input,select{
   overflow:auto;
 }
 
-/* =========================
-   CARD
-========================= */
+/* CARD */
 .card{
   background:var(--card);
   border-radius:18px;
@@ -104,20 +150,13 @@ input,select{
   cursor:pointer;
   transition:.4s;
 }
-.card:hover{
-  transform:scale(1.06);
-  box-shadow:0 0 45px rgba(255,122,0,.45);
-}
+.card:hover{transform:scale(1.06)}
 .card img{
   width:100%;
   height:160px;
   object-fit:cover;
-  background:#000;
 }
-.card h3{
-  margin:8px 0 2px;
-  text-align:center;
-}
+.card h3{text-align:center;margin:6px 0 2px}
 .card small{
   display:block;
   text-align:center;
@@ -129,47 +168,23 @@ input,select{
   gap:8px;
   padding:8px;
 }
-.controls button{
-  flex:1;
-  padding:8px;
-  font-size:12px;
-}
+.controls button{flex:1;font-size:12px}
 
-/* =========================
-   VIEWER
-========================= */
+/* VIEWER */
 #viewer{
   position:fixed;
   inset:0;
-  background:#000;
+  background:black;
   display:none;
   flex-direction:column;
   z-index:999;
 }
-#viewerHeader{
+#viewerTop{
   display:flex;
   gap:10px;
   padding:10px;
 }
-#viewer iframe{
-  flex:1;
-  border:none;
-}
-
-/* =========================
-   LOGIN
-========================= */
-#login{
-  position:fixed;
-  inset:0;
-  background:#000;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  gap:12px;
-  z-index:1000;
-}
+#viewer iframe{flex:1;border:none}
 </style>
 </head>
 
@@ -177,121 +192,148 @@ input,select{
 
 <canvas id="web"></canvas>
 
-<div id="login">
-  <h2>Web-Site Login</h2>
-  <input id="email" placeholder="Email">
-  <input id="password" placeholder="Password" type="password">
-  <button onclick="login()">Login / Sign Up</button>
+<!-- AUTH -->
+<div id="auth">
+  <div class="authBox">
+    <h2>Login</h2>
+    <input id="loginEmail" placeholder="Email">
+    <input id="loginPass" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+  </div>
+
+  <div class="authBox">
+    <h2>Sign Up</h2>
+    <input id="signupEmail" placeholder="Email">
+    <input id="signupPass" type="password" placeholder="Password">
+    <button onclick="signup()">Create Account</button>
+  </div>
 </div>
 
-<div id="panel" hidden>
-  <h1>Web-Site</h1>
-  <small id="roleLabel"></small>
-  <input id="search" placeholder="Search sites">
-  <select id="categoryFilter">
-    <option value="all">All Categories</option>
-  </select>
-  <button onclick="addSite()">➕ Add Site</button>
-  <button class="danger" onclick="logout()">Logout</button>
+<!-- ADMIN SIGN IN -->
+<div id="adminBox">
+  <h3>Admin Sign In</h3>
+  <input id="adminUser" placeholder="Admin Username">
+  <input id="adminPass" type="password" placeholder="Admin Password">
+  <button onclick="adminLogin()">Unlock Admin</button>
 </div>
 
-<div id="main"></div>
+<!-- APP -->
+<div id="app" hidden>
+  <div id="panel">
+    <h1>Web-Site</h1>
+    <div id="role">Viewer</div>
+    <input id="search" placeholder="Search">
+    <select id="filter">
+      <option value="all">All Categories</option>
+    </select>
+    <button onclick="addSite()">➕ Add Site</button>
+    <button class="danger" onclick="logout()">Logout</button>
+  </div>
+  <div id="main"></div>
+</div>
 
+<!-- VIEWER -->
 <div id="viewer">
-  <div id="viewerHeader">
+  <div id="viewerTop">
     <input id="viewerPass" placeholder="Viewer Password">
-    <button onclick="unlockViewer()">Unlock</button>
+    <button onclick="unlock()">Unlock</button>
     <button class="danger" onclick="closeViewer()">Close</button>
   </div>
   <iframe></iframe>
 </div>
 
 <script>
-/* =========================
-   FIREBASE INIT
-========================= */
+/* ========== FIREBASE ========== */
 firebase.initializeApp({
-  /* PASTE YOUR FIREBASE CONFIG HERE */
+  /* YOUR FIREBASE CONFIG HERE */
 });
 const auth=firebase.auth();
 const db=firebase.firestore();
 
-/* =========================
-   CONSTANTS
-========================= */
-const ADMINS=["ELIADMIN1","DANIELADMIN2"];
-const main=document.getElementById("main");
-const panel=document.getElementById("panel");
-const loginBox=document.getElementById("login");
-const categoryFilter=document.getElementById("categoryFilter");
-let currentSite=null;
-let isAdmin=false;
+/* ========== ADMIN PASSWORDS ========== */
+const ADMIN_PASSWORDS={
+  ELIADMIN1:"admin1.00101",
+  DANIELADMIN2:"admin2.00102"
+};
 
-/* =========================
-   AUTH
-========================= */
+let isAdmin=false;
+let currentSite=null;
+
+/* ========== AUTH ========== */
 function login(){
- auth.signInWithEmailAndPassword(email.value,password.value)
- .catch(()=>auth.createUserWithEmailAndPassword(email.value,password.value));
+ auth.signInWithEmailAndPassword(
+  loginEmail.value,loginPass.value
+ );
+}
+function signup(){
+ auth.createUserWithEmailAndPassword(
+  signupEmail.value,signupPass.value
+ );
 }
 function logout(){auth.signOut()}
 
 auth.onAuthStateChanged(user=>{
  if(!user){
-  loginBox.style.display="flex";
-  panel.hidden=true;
+  auth.style.display="flex";
+  app.hidden=true;
+  adminBox.style.display="none";
  }else{
-  loginBox.style.display="none";
-  panel.hidden=false;
-  const name=user.email.split("@")[0].toUpperCase();
-  isAdmin=ADMINS.includes(name);
-  roleLabel.textContent=isAdmin?"Admin":"Viewer";
+  auth.style.display="none";
+  app.hidden=false;
+  adminBox.style.display="block";
   loadSites();
  }
 });
 
-/* =========================
-   LOAD & RENDER
-========================= */
+/* ========== ADMIN LOGIN ========== */
+function adminLogin(){
+ const u=adminUser.value.toUpperCase();
+ if(ADMIN_PASSWORDS[u]!==adminPass.value)
+  return alert("Wrong admin password");
+ isAdmin=true;
+ role.textContent="Admin";
+ alert("Admin unlocked");
+}
+
+/* ========== DATA ========== */
 function loadSites(){
  db.collection("sites").onSnapshot(snap=>{
   main.innerHTML="";
-  categoryFilter.innerHTML='<option value="all">All Categories</option>';
+  filter.innerHTML='<option value="all">All Categories</option>';
   let cats=new Set();
 
   snap.forEach(doc=>{
-   const site=doc.data();
-   site.id=doc.id;
-   cats.add(site.category);
+   const s=doc.data(); s.id=doc.id;
+   cats.add(s.category);
 
-   if(categoryFilter.value!=="all" && site.category!==categoryFilter.value)return;
-   if(!site.name.toLowerCase().includes(search.value.toLowerCase()))return;
+   if(filter.value!=="all"&&s.category!==filter.value)return;
+   if(!s.name.toLowerCase().includes(search.value.toLowerCase()))return;
 
    const card=document.createElement("div");
    card.className="card";
    card.innerHTML=`
-    <img src="https://www.google.com/s2/favicons?sz=256&domain=${site.url}">
-    <h3>${site.name}</h3>
-    <small>${site.category}</small>
+    <img src="https://www.google.com/s2/favicons?sz=256&domain=${s.url}">
+    <h3>${s.name}</h3>
+    <small>${s.category}</small>
    `;
-   card.onclick=()=>openViewer(site);
+   card.onclick=()=>openViewer(s);
 
    if(isAdmin){
-    const controls=document.createElement("div");
-    controls.className="controls";
-    controls.innerHTML=`
+    const c=document.createElement("div");
+    c.className="controls";
+    c.innerHTML=`
       <button>Edit</button>
       <button class="danger">Delete</button>
     `;
-    controls.children[0].onclick=e=>{
+    c.children[0].onclick=e=>{
       e.stopPropagation();
-      editSite(site);
+      editSite(s);
     };
-    controls.children[1].onclick=e=>{
+    c.children[1].onclick=e=>{
       e.stopPropagation();
-      deleteSite(site.id);
+      deleteSite(s.id);
     };
-    card.appendChild(controls);
+    card.appendChild(c);
    }
    main.appendChild(card);
   });
@@ -299,48 +341,44 @@ function loadSites(){
   cats.forEach(c=>{
    const o=document.createElement("option");
    o.value=o.textContent=c;
-   categoryFilter.appendChild(o);
+   filter.appendChild(o);
   });
  });
 }
-
 search.oninput=loadSites;
-categoryFilter.onchange=loadSites;
+filter.onchange=loadSites;
 
-/* =========================
-   ADMIN ACTIONS
-========================= */
+/* ========== ADMIN ACTIONS ========== */
 function addSite(){
  if(!isAdmin)return alert("Admins only");
  const name=prompt("Site name");
- const url=prompt("Site URL");
+ const url=prompt("URL");
  const category=prompt("Category");
  const pass=prompt("Viewer password");
  if(name&&url&&category&&pass)
   db.collection("sites").add({name,url,category,pass});
 }
-function editSite(site){
- const name=prompt("Name",site.name);
- const url=prompt("URL",site.url);
- const category=prompt("Category",site.category);
- const pass=prompt("Viewer password",site.pass);
- db.collection("sites").doc(site.id).update({name,url,category,pass});
+function editSite(s){
+ const name=prompt("Name",s.name);
+ const url=prompt("URL",s.url);
+ const category=prompt("Category",s.category);
+ const pass=prompt("Viewer password",s.pass);
+ db.collection("sites").doc(s.id).update({name,url,category,pass});
 }
 function deleteSite(id){
- if(confirm("Delete this site?"))
+ if(confirm("Delete site?"))
   db.collection("sites").doc(id).delete();
 }
 
-/* =========================
-   VIEWER
-========================= */
-function openViewer(site){
- currentSite=site;
+/* ========== VIEWER ========== */
+function openViewer(s){
+ currentSite=s;
  viewer.style.display="flex";
  viewer.querySelector("iframe").src="";
 }
-function unlockViewer(){
- if(viewerPass.value!==currentSite.pass)return alert("Wrong password");
+function unlock(){
+ if(viewerPass.value!==currentSite.pass)
+  return alert("Wrong password");
  viewer.querySelector("iframe").src=currentSite.url;
 }
 function closeViewer(){
@@ -348,20 +386,17 @@ function closeViewer(){
  viewer.querySelector("iframe").src="";
 }
 
-/* =========================
-   SPIDER WEB ANIMATION
-========================= */
-const c=document.getElementById("web");
-const ctx=c.getContext("2d");
+/* ========== SPIDER WEB ========== */
+const c=document.getElementById("web"),ctx=c.getContext("2d");
 function resize(){c.width=innerWidth;c.height=innerHeight}
 window.onresize=resize;resize();
-let pts=[...Array(90)].map(()=>({
+let pts=[...Array(80)].map(()=>({
  x:Math.random()*c.width,
  y:Math.random()*c.height,
  vx:(Math.random()-.5)*.5,
  vy:(Math.random()-.5)*.5
 }));
-(function animate(){
+(function anim(){
  ctx.clearRect(0,0,c.width,c.height);
  pts.forEach(p=>{
   p.x+=p.vx;p.y+=p.vy;
@@ -378,7 +413,7 @@ let pts=[...Array(90)].map(()=>({
    }
   });
  });
- requestAnimationFrame(animate);
+ requestAnimationFrame(anim);
 })();
 </script>
 
