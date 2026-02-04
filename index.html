@@ -3,255 +3,234 @@
 <head>
 <meta charset="UTF-8">
 <title>Web-Site</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
 
 <style>
-/* ================= ROOT ================= */
+/* ================= THEMES ================= */
 :root{
-  --bg:#0b0c10;
-  --panel:rgba(20,22,30,.88);
-  --card:rgba(28,30,40,.9);
-  --teal:#00ffd5;
-  --orange:#ff7a00;
-  --danger:#ff4b4b;
+  --bg:#0e0f14;
+  --panel:#151822;
+  --card:#1c2030;
+  --text:#ffffff;
+  --accent:#00e5ff;
+  --border:#2a2f44;
+}
+[data-theme="light"]{
+  --bg:#f4f4f4;
+  --panel:#ffffff;
+  --card:#eaeaea;
+  --text:#000000;
+  --accent:#0066ff;
+  --border:#cccccc;
+}
+[data-theme="neon"]{
+  --bg:#050510;
+  --panel:#0a0a18;
+  --card:#111133;
+  --text:#ffffff;
+  --accent:#7cff00;
+  --border:#00ffff;
 }
 
-/* ================= RESET ================= */
 *{box-sizing:border-box;font-family:system-ui}
 body{
   margin:0;
-  background:radial-gradient(circle at top,#1a1c22,#000);
-  color:white;
+  background:var(--bg);
+  color:var(--text);
   height:100vh;
   overflow:hidden;
 }
 
-/* ================= SPIDER WEB ================= */
-canvas{
-  position:fixed;
-  inset:0;
-  z-index:-1;
-}
-
-/* ================= AUTH SCREEN ================= */
-#auth{
-  position:fixed;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:40px;
-  background:rgba(0,0,0,.85);
-  z-index:1000;
-}
-
-/* LOGIN / SIGNUP BOX */
-.authBox{
-  width:300px;
-  background:var(--panel);
-  backdrop-filter:blur(14px);
-  padding:20px;
-  border-radius:16px;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-  box-shadow:0 0 30px rgba(0,255,213,.2);
-}
-.authBox h2{
-  text-align:center;
-  color:var(--teal);
-}
-
-/* ADMIN BOX */
-#adminBox{
-  position:fixed;
-  top:20px;
-  right:20px;
-  width:260px;
-  background:var(--panel);
-  padding:16px;
-  border-radius:14px;
-  box-shadow:0 0 25px rgba(255,122,0,.4);
-  display:none;
-  z-index:1100;
-}
-#adminBox h3{
-  margin:0 0 10px;
-  text-align:center;
-  color:var(--orange);
-}
-
-/* INPUTS */
-input,select,button{
-  padding:12px;
-  border:none;
-  border-radius:10px;
-}
-input,select{
-  background:#111;
-  color:white;
-}
-button{
-  background:linear-gradient(135deg,var(--teal),var(--orange));
-  font-weight:700;
-  cursor:pointer;
-}
-button.danger{
-  background:linear-gradient(135deg,var(--danger),#ff0000);
-}
-
-/* ================= APP ================= */
+/* ================= LAYOUT ================= */
 #app{
   display:flex;
   height:100vh;
 }
 
-/* PANEL */
-#panel{
-  width:270px;
+/* ================= SIDEBAR ================= */
+#sidebar{
+  width:230px;
   background:var(--panel);
-  backdrop-filter:blur(16px);
+  border-right:1px solid var(--border);
   padding:18px;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-  border-right:1px solid #222;
 }
-#panel h1{
+#sidebar h1{
   text-align:center;
-  color:var(--teal);
-  text-shadow:0 0 20px var(--teal);
+  margin-bottom:20px;
 }
-#role{
-  text-align:center;
-  opacity:.7;
+.nav{
+  padding:10px;
+  border-radius:6px;
+  margin-bottom:8px;
+  cursor:pointer;
+}
+.nav.active{
+  background:var(--accent);
+  color:black;
 }
 
-/* MAIN */
+/* ================= MAIN ================= */
 #main{
   flex:1;
-  padding:28px;
-  display:grid;
-  grid-template-columns:repeat(auto-fill,280px);
-  gap:26px;
+  padding:30px;
   overflow:auto;
 }
 
-/* CARD */
-.card{
+/* ================= PAGES ================= */
+.page{display:none}
+.page.active{display:block}
+
+/* ================= FORMS ================= */
+.box{
+  max-width:420px;
   background:var(--card);
-  border-radius:18px;
-  overflow:hidden;
-  box-shadow:0 0 30px rgba(0,255,213,.25);
-  cursor:pointer;
-  transition:.4s;
+  border:1px solid var(--border);
+  padding:20px;
+  margin-bottom:20px;
 }
-.card:hover{transform:scale(1.06)}
-.card img{
+input,button,select{
   width:100%;
-  height:160px;
+  padding:10px;
+  margin:6px 0;
+}
+button{
+  background:var(--accent);
+  border:none;
+  font-weight:600;
+  cursor:pointer;
+}
+
+/* ================= SITES ================= */
+#siteList{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,260px);
+  gap:20px;
+}
+.site{
+  background:var(--card);
+  border:1px solid var(--border);
+  padding:10px;
+  cursor:pointer;
+}
+.site img{
+  width:100%;
+  height:140px;
   object-fit:cover;
 }
-.card h3{text-align:center;margin:6px 0 2px}
-.card small{
-  display:block;
-  text-align:center;
-  opacity:.7;
-  padding-bottom:6px;
-}
-.controls{
-  display:flex;
-  gap:8px;
-  padding:8px;
-}
-.controls button{flex:1;font-size:12px}
 
-/* VIEWER */
+/* ================= VIEWER ================= */
 #viewer{
   position:fixed;
   inset:0;
   background:black;
   display:none;
   flex-direction:column;
-  z-index:999;
-}
-#viewerTop{
-  display:flex;
-  gap:10px;
-  padding:10px;
 }
 #viewer iframe{flex:1;border:none}
+
+/* ================= AUTH ================= */
+#auth{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.85);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:30px;
+  z-index:1000;
+}
 </style>
 </head>
 
-<body>
+<body data-theme="dark">
 
-<canvas id="web"></canvas>
-
-<!-- AUTH -->
 <div id="auth">
-  <div class="authBox">
-    <h2>Login</h2>
+  <div class="box">
+    <h3>Login</h3>
     <input id="loginEmail" placeholder="Email">
     <input id="loginPass" type="password" placeholder="Password">
     <button onclick="login()">Login</button>
   </div>
-
-  <div class="authBox">
-    <h2>Sign Up</h2>
+  <div class="box">
+    <h3>Create Account</h3>
     <input id="signupEmail" placeholder="Email">
     <input id="signupPass" type="password" placeholder="Password">
-    <button onclick="signup()">Create Account</button>
+    <button onclick="signup()">Create</button>
+  </div>
+  <div class="box">
+    <h3>Admin Login</h3>
+    <input id="adminUser" placeholder="Admin User">
+    <input id="adminPass" type="password" placeholder="Password">
+    <button onclick="adminLogin()">Admin Login</button>
   </div>
 </div>
 
-<!-- ADMIN SIGN IN -->
-<div id="adminBox">
-  <h3>Admin Sign In</h3>
-  <input id="adminUser" placeholder="Admin Username">
-  <input id="adminPass" type="password" placeholder="Admin Password">
-  <button onclick="adminLogin()">Unlock Admin</button>
-</div>
-
-<!-- APP -->
 <div id="app" hidden>
-  <div id="panel">
+  <div id="sidebar">
     <h1>Web-Site</h1>
-    <div id="role">Viewer</div>
-    <input id="search" placeholder="Search">
-    <select id="filter">
-      <option value="all">All Categories</option>
+    <div class="nav active" onclick="show('access')">Access</div>
+    <div class="nav" onclick="show('sites')">Sites</div>
+    <div class="nav" onclick="show('admin')">Admin</div>
+    <div class="nav" onclick="show('settings')">Settings</div>
+    <select onchange="setTheme(this.value)">
+      <option value="dark">Dark</option>
+      <option value="light">Light</option>
+      <option value="neon">Neon</option>
     </select>
-    <button onclick="addSite()">➕ Add Site</button>
-    <button class="danger" onclick="logout()">Logout</button>
+    <button onclick="logout()">Logout</button>
   </div>
-  <div id="main"></div>
+
+  <div id="main">
+    <div id="access" class="page active">
+      <h2>Account</h2>
+      <input type="file" onchange="uploadPic(this)">
+      <img id="pfp" width="120">
+    </div>
+
+    <div id="sites" class="page">
+      <h2>Sites</h2>
+      <div id="siteList"></div>
+    </div>
+
+    <div id="admin" class="page">
+      <h2>Admin</h2>
+      <p id="adminMsg">To see the Admin Button you must login as a admin</p>
+      <div id="adminTools" hidden>
+        <input id="siteName" placeholder="Site Name">
+        <input id="siteURL" placeholder="Site URL">
+        <input id="sitePass" placeholder="Viewer Password">
+        <button onclick="addSite()">Add Site</button>
+      </div>
+    </div>
+
+    <div id="settings" class="page">
+      <h2>Settings</h2>
+      <p>Theme & Account Options</p>
+    </div>
+  </div>
 </div>
 
-<!-- VIEWER -->
 <div id="viewer">
-  <div id="viewerTop">
-    <input id="viewerPass" placeholder="Viewer Password">
-    <button onclick="unlock()">Unlock</button>
-    <button class="danger" onclick="closeViewer()">Close</button>
-  </div>
+  <input id="viewerPass" placeholder="Viewer Password">
+  <button onclick="unlock()">Unlock</button>
+  <button onclick="closeViewer()">Close</button>
   <iframe></iframe>
 </div>
 
 <script>
-/* ========== FIREBASE ========== */
 firebase.initializeApp({
-  /* YOUR FIREBASE CONFIG HERE */
+  /* YOUR FIREBASE CONFIG */
 });
 const auth=firebase.auth();
 const db=firebase.firestore();
+const storage=firebase.storage();
 
-/* ========== ADMIN PASSWORDS ========== */
-const ADMIN_PASSWORDS={
+const ADMINS={
   ELIADMIN1:"admin1.00101",
   DANIELADMIN2:"admin2.00102"
 };
@@ -259,126 +238,88 @@ const ADMIN_PASSWORDS={
 let isAdmin=false;
 let currentSite=null;
 
-/* ========== AUTH ========== */
-function login(){
- auth.signInWithEmailAndPassword(
-  loginEmail.value,loginPass.value
- );
-}
-function signup(){
- auth.createUserWithEmailAndPassword(
-  signupEmail.value,signupPass.value
- );
-}
+/* AUTH */
+function login(){auth.signInWithEmailAndPassword(loginEmail.value,loginPass.value)}
+function signup(){auth.createUserWithEmailAndPassword(signupEmail.value,signupPass.value)}
 function logout(){auth.signOut()}
 
-auth.onAuthStateChanged(user=>{
- if(!user){
-  auth.style.display="flex";
+auth.onAuthStateChanged(u=>{
+ if(!u){
+  authBox.style.display="flex";
   app.hidden=true;
-  adminBox.style.display="none";
  }else{
   auth.style.display="none";
   app.hidden=false;
-  adminBox.style.display="block";
   loadSites();
  }
 });
 
-/* ========== ADMIN LOGIN ========== */
+/* ADMIN */
 function adminLogin(){
- const u=adminUser.value.toUpperCase();
- if(ADMIN_PASSWORDS[u]!==adminPass.value)
-  return alert("Wrong admin password");
+ if(ADMINS[adminUser.value]!==adminPass.value) return alert("Denied");
  isAdmin=true;
- role.textContent="Admin";
- alert("Admin unlocked");
+ adminMsg.hidden=true;
+ adminTools.hidden=false;
 }
 
-/* ========== DATA ========== */
+/* NAV */
+function show(id){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ event.target.classList.add('active');
+}
+
+/* THEME */
+function setTheme(t){document.body.setAttribute("data-theme",t)}
+
+/* PROFILE PIC */
+function uploadPic(i){
+ const f=i.files[0];
+ const ref=storage.ref("pfp/"+auth.currentUser.uid);
+ ref.put(f).then(()=>ref.getDownloadURL().then(u=>pfp.src=u));
+}
+
+/* SITES */
 function loadSites(){
- db.collection("sites").onSnapshot(snap=>{
-  main.innerHTML="";
-  filter.innerHTML='<option value="all">All Categories</option>';
-  let cats=new Set();
-
-  snap.forEach(doc=>{
-   const s=doc.data(); s.id=doc.id;
-   cats.add(s.category);
-
-   if(filter.value!=="all"&&s.category!==filter.value)return;
-   if(!s.name.toLowerCase().includes(search.value.toLowerCase()))return;
-
-   const card=document.createElement("div");
-   card.className="card";
-   card.innerHTML=`
-    <img src="https://www.google.com/s2/favicons?sz=256&domain=${s.url}">
-    <h3>${s.name}</h3>
-    <small>${s.category}</small>
+ db.collection("sites").onSnapshot(s=>{
+  siteList.innerHTML="";
+  s.forEach(d=>{
+   const site=d.data(); site.id=d.id;
+   const div=document.createElement("div");
+   div.className="site";
+   div.innerHTML=`
+     <img src="https://www.google.com/s2/favicons?sz=256&domain=${site.url}">
+     <h4>${site.name}</h4>
+     ${isAdmin?'<button onclick="deleteSite(\''+site.id+'\')">Delete</button>':''}
    `;
-   card.onclick=()=>openViewer(s);
-
-   if(isAdmin){
-    const c=document.createElement("div");
-    c.className="controls";
-    c.innerHTML=`
-      <button>Edit</button>
-      <button class="danger">Delete</button>
-    `;
-    c.children[0].onclick=e=>{
-      e.stopPropagation();
-      editSite(s);
-    };
-    c.children[1].onclick=e=>{
-      e.stopPropagation();
-      deleteSite(s.id);
-    };
-    card.appendChild(c);
-   }
-   main.appendChild(card);
-  });
-
-  cats.forEach(c=>{
-   const o=document.createElement("option");
-   o.value=o.textContent=c;
-   filter.appendChild(o);
+   div.onclick=()=>openViewer(site);
+   siteList.appendChild(div);
   });
  });
 }
-search.oninput=loadSites;
-filter.onchange=loadSites;
 
-/* ========== ADMIN ACTIONS ========== */
 function addSite(){
- if(!isAdmin)return alert("Admins only");
- const name=prompt("Site name");
- const url=prompt("URL");
- const category=prompt("Category");
- const pass=prompt("Viewer password");
- if(name&&url&&category&&pass)
-  db.collection("sites").add({name,url,category,pass});
-}
-function editSite(s){
- const name=prompt("Name",s.name);
- const url=prompt("URL",s.url);
- const category=prompt("Category",s.category);
- const pass=prompt("Viewer password",s.pass);
- db.collection("sites").doc(s.id).update({name,url,category,pass});
-}
-function deleteSite(id){
- if(confirm("Delete site?"))
-  db.collection("sites").doc(id).delete();
+ db.collection("sites").add({
+  name:siteName.value,
+  url:siteURL.value,
+  pass:sitePass.value
+ });
+ log("Added site "+siteName.value);
 }
 
-/* ========== VIEWER ========== */
+function deleteSite(id){
+ db.collection("sites").doc(id).delete();
+ log("Deleted site "+id);
+}
+
+/* VIEWER */
 function openViewer(s){
  currentSite=s;
  viewer.style.display="flex";
- viewer.querySelector("iframe").src="";
 }
 function unlock(){
- if(viewerPass.value!==currentSite.pass)
-  return alert("Wrong password");
+ if(viewerPass.value!==currentSite.pass) return alert("Wrong");
  viewer.querySelector("iframe").src=currentSite.url;
 }
 function closeViewer(){
@@ -386,35 +327,14 @@ function closeViewer(){
  viewer.querySelector("iframe").src="";
 }
 
-/* ========== SPIDER WEB ========== */
-const c=document.getElementById("web"),ctx=c.getContext("2d");
-function resize(){c.width=innerWidth;c.height=innerHeight}
-window.onresize=resize;resize();
-let pts=[...Array(80)].map(()=>({
- x:Math.random()*c.width,
- y:Math.random()*c.height,
- vx:(Math.random()-.5)*.5,
- vy:(Math.random()-.5)*.5
-}));
-(function anim(){
- ctx.clearRect(0,0,c.width,c.height);
- pts.forEach(p=>{
-  p.x+=p.vx;p.y+=p.vy;
-  if(p.x<0||p.x>c.width)p.vx*=-1;
-  if(p.y<0||p.y>c.height)p.vy*=-1;
-  pts.forEach(o=>{
-   const d=Math.hypot(p.x-o.x,p.y-o.y);
-   if(d<120){
-    ctx.strokeStyle=`rgba(0,255,213,${1-d/120})`;
-    ctx.beginPath();
-    ctx.moveTo(p.x,p.y);
-    ctx.lineTo(o.x,o.y);
-    ctx.stroke();
-   }
-  });
+/* LOGS */
+function log(msg){
+ db.collection("logs").add({
+  msg,
+  time:new Date(),
+  admin:auth.currentUser.email
  });
- requestAnimationFrame(anim);
-})();
+}
 </script>
 
 </body>
